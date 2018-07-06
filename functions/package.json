@@ -12,9 +12,10 @@
   "main": "lib/index.js",
   "dependencies": {
     "apprun": "^1.13.7",
+    "express": "^4.16.3",
+    "firebase": "^5.2.0",
     "firebase-admin": "~5.12.1",
-    "firebase-functions": "^1.0.3",
-    "express": "^4.16.3"
+    "firebase-functions": "^1.0.3"
   },
   "devDependencies": {
     "tslint": "^5.8.0",

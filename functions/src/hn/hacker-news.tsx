@@ -63,7 +63,7 @@ const Item = ({ item }) => {
 
 const ListItem = ({ item, idx }) => {
   if (!item) return;
-  const item_link = `#/item/${item.id}`;
+  const item_link = `/item/${item.id}`;
   return <li>
     <div className={'score'}>{item.score}</div>
     <div><a href={item.url || item_link} target="_blank">{item.title}</a></div>
@@ -85,7 +85,7 @@ const List = ({ list }) => {
     </ul>
     <div className='more'>
       <span>{list.min + 1} - {list.max} ({list.items.length}) &nbsp;</span>
-      {list.items && list.max < list.items.length && <a onclick={() => app.run('more')}> |&nbsp; More ...</a>}
+      {list.items && list.max < list.items.length && <a href={`/${list.type}/${list.max}`}> |&nbsp; More ...</a>}
     </div>
   </div>;
 }
@@ -101,12 +101,12 @@ const view = state => {
             <a href='https://github.com/yysun/apprun'>AppRun</a> &#10084;&nbsp;
             <a href='https://news.ycombinator.com'>HN</a>
           </span>
-          <a style={style('top')} href={`#/top`}>Top</a> |&nbsp;
-          <a style={style('new')} href={`#/new`}>New</a> |&nbsp;
-          <a style={style('best')} href={`#/best`}>Best</a> |&nbsp;
-          <a style={style('show')} href={`#/show`}>Show</a> |&nbsp;
-          <a style={style('ask')} href={`#/ask`}>Ask</a> |&nbsp;
-          <a style={style('job')} href={`#/job`}>Jobs</a>
+          <a style={style('top')} href={`/top`}>Top</a> |&nbsp;
+          <a style={style('new')} href={`/new`}>New</a> |&nbsp;
+          <a style={style('best')} href={`/best`}>Best</a> |&nbsp;
+          <a style={style('show')} href={`/show`}>Show</a> |&nbsp;
+          <a style={style('ask')} href={`/ask`}>Ask</a> |&nbsp;
+          <a style={style('job')} href={`/job`}>Jobs</a>
         </div>
       </div>
     </div>
@@ -127,21 +127,25 @@ const view = state => {
 }
 
 const update = {
-  '#': async (state, type, id) => {
-    type = type || state.type || 'top';
+  '#': (state, type, id) => {
+    type = type || 'top';
     state.type = type;
-    state.id = id;
     if (type === 'item') {
-      state[id] = await getItem(id);
+      state.id = id;
+      getItem(state);
     } else {
-      state[type] = state[type] || { min: 0, max: page_size, items: [] };
-      await getList(type, state[type]);
+      if (!state[type]) state[type] = { type, min: 0, max: page_size, items: [] };
+      else {
+        const max = parseInt(id) || 0;
+        state[type].max = Math.min(max + page_size, state[type].items.length);
+      }
+      getList(state);
     }
-    return state;
-  }
-};
+  },
+  'render': state => state,
+}
 
-app.start('', {}, view, update);
+app.start(null, {}, view, update);
 
 
 

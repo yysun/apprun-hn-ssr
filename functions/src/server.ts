@@ -40,6 +40,8 @@ app.get(/\/(top|new|best|show|ask|job|item)?/, async (req, res) => {
   }
 });
 
-const listener = app.listen(process.env.PORT || 3000, function () {
-  console.log('Your app is listening on port ' + listener.address().port);
-});
+// const listener = app.listen(process.env.PORT || 3000, function () {
+//   console.log('Your app is listening on port ' + listener.address().port);
+// });
+
+export default app;

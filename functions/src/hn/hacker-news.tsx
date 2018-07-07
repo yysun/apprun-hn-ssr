@@ -70,7 +70,7 @@ const ListItem = ({ item, idx }) => {
     <div className='meta'>
       <span>by {item.by}</span> |&nbsp;
         <span>{timeAgo(item.time)} ago</span> |&nbsp;
-        <span><a href={`${item_link}`}>{pluralize(item.descendants, ' comment')}</a></span>
+        <span><a className="menu" href={`${item_link}`}>{pluralize(item.descendants, ' comment')}</a></span>
     </div>
   </li>
 }
@@ -94,37 +94,9 @@ const List = ({ list }) => {
 const view = state => {
   if (state instanceof Promise) return;
   const style = (type) => ({ 'font-weight': type === state.type ? 'bold' : 'normal' });
-  return <div className={`hn ${state.type}`}>
-    <div className='header'>
-      <div className='inner'>
-        <div style={{ 'float': 'left' }}>
-          <span style={{ 'margin-right': '20px' }}>
-            <a href='https://github.com/yysun/apprun'>AppRun</a> &#10084;&nbsp;
-            <a href='https://news.ycombinator.com'>HN</a>
-          </span>
-          <a className="menu" style={style('top')} href={`/top`}>Top</a> |&nbsp;
-          <a className="menu" style={style('new')} href={`/new`}>New</a> |&nbsp;
-          <a className="menu" style={style('best')} href={`/best`}>Best</a> |&nbsp;
-          <a className="menu" style={style('show')} href={`/show`}>Show</a> |&nbsp;
-          <a className="menu" style={style('ask')} href={`/ask`}>Ask</a> |&nbsp;
-          <a className="menu" style={style('job')} href={`/job`}>Jobs</a>
-        </div>
-      </div>
-    </div>
-    <div className='main'>
-      <div className='inner'>
-        {state.type === 'item' ?
-          <Item item={state[state.id]} /> :
-          <List list={state[state.type]} />}
-      </div>
-    </div>
-    <div className='footer'>
-      <div className='inner'>
-        Powered by <a href='https://github.com/yysun/apprun'>AppRun</a>,
-        Source code: <a href='https://github.com/yysun/apprun-hn'>Github</a>
-      </div>
-    </div>
-  </div>
+  return state.type === 'item' ?
+    <Item item={state[state.id]} /> :
+    <List list={state[state.type]} />
 }
 
 const update = {

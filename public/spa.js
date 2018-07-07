@@ -13,16 +13,20 @@ window.addEventListener('popstate', (e) => {
   app.run('/', path);
 });
 
-const menus = document.querySelectorAll('a.menu');
-for (let i = 0; i < menus.length; ++i) {
-  //menus[i].classList.remove('active');
-  const menu = menus[i];
-  menu.onclick = (event) => {
-    event.preventDefault();
-    history.pushState(null, '', menu.href);
-    app.run('/', menu.pathname);
-  };
-}
+document.body.addEventListener('click', e => {
+  const t = e.target;
+  if (t.matches('.toggle')) {
+    t.classList.toggle('closed');
+    t.nextElementSibling && t.nextElementSibling.classList.toggle('collapsed');
+  } else if (t.matches('.menu')) {
+    e.preventDefault();
+    history.pushState(null, '', t.href);
+    app.run('/', t.pathname);
+    const menus = document.querySelectorAll('a.menu');
+    for (let i = 0; i < menus.length; ++i) menus[i].classList.remove('active');
+    t.classList.add('active');
+  }
+});
 
 const view = (state) => state;
 

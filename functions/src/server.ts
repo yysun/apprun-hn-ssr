@@ -31,7 +31,7 @@ const route = async (req) => new Promise((resolve, reject) => {
   }
 });
 
-app.get(/\/(top|new|best|show|ask|job|item)?/, async (req, res) => {
+app.get(/^\/(top|new|best|show|ask|job|item)?\/?(\d+)?$/, async (req, res) => {
   try {
     const vdom = await route(req);
     res.render('view', { layout, vdom });

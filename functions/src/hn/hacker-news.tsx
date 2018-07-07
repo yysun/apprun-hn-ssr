@@ -34,11 +34,11 @@ const Comment = ({ comment }) => {
 const Comments = ({ item }) => {
   if (!item || !item.kids) return;
   const list = item.kids;
-  const num = item.kids && item.kids.filter(items => !item.deleted && !item.dead).length;
+  const num = item.kids && item.kids.filter(items => item && !item.deleted && !item.dead).length;
   return <div>
     {num && <div className='toggle'>{pluralize(num, ' comment')} </div>}
     <ul className='comment-list'> {
-      list.filter(comment => !comment.deleted)
+      list.filter(comment => comment && !comment.deleted)
         .map(comment => <Comment comment={comment} />)
     }
     </ul>

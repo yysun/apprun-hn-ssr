@@ -41,10 +41,13 @@ export const getList = async (state) => {
     }));
     app.run('render');
   }
-  if (list.items.length) return fetchListItems(list);
-  const ref = db.child(`${type}stories`);
-  ref.on('value', async snapshot => {
-    list.items = snapshot.val();
+  if (list.items.length) {
     await fetchListItems(list);
-  })
+  } else {
+    const ref = db.child(`${type}stories`);
+    ref.on('value', async snapshot => {
+      list.items = snapshot.val();
+      await fetchListItems(list);
+    })
+  }
 };

@@ -18,8 +18,7 @@ const view = (children, path='') => {
           <div className='inner'>
             <div style={{ 'float': 'left' }}>
               <span style={{ 'margin-right': '20px' }}>
-                <a href='https://github.com/yysun/apprun'>AppRun</a> &#10084;&nbsp;
-            <a href='https://news.ycombinator.com'>HN</a>
+                <a href='/'>AppRun&#10084;HN</a>
               </span>
               <a className={`menu${active('/top')} ${active('/')}`} href={`/top`}>Top</a>{' | '}
               <a className={`menu${active('/new')}`} href={`/new`}>New</a> {' | '}
@@ -44,7 +43,48 @@ const view = (children, path='') => {
         </div>
       </div>
       <script src="https://unpkg.com/apprun@latest/dist/apprun.js"></script>
-      <script src="/spa.js"></script>
+      <script>{`
+const get = async (url) => {
+  const response = await fetch(url,
+    { headers: { accept: 'application/json' } });
+  if (!response.ok) {
+    const data = await response.text();
+    throw data;
+  }
+  return response.json();
+}
+
+window.addEventListener('popstate', (e) => {
+  const path = document.location.pathname;
+  app.run('/', path);
+});
+
+document.body.addEventListener('click', e => {
+  const t = e.target;
+  if (t.matches('.toggle')) {
+    t.classList.toggle('closed');
+    t.nextElementSibling && t.nextElementSibling.classList.toggle('collapsed');
+  } else if (t.matches('.menu')) {
+    e.preventDefault();
+    history.pushState(null, '', t.href);
+    app.run('/', t.pathname);
+    const menus = document.querySelectorAll('a.menu');
+    for (let i = 0; i < menus.length; ++i) menus[i].classList.remove('active');
+    t.classList.add('active');
+  }
+});
+
+const view = (state) => state;
+
+const update = {
+  '/': async (_, path) => {
+    const json = await get(path);
+    return json;
+  }
+};
+
+app.start('my-app', null, view, update);
+      `}</script>
     </body>
   </html>
 }

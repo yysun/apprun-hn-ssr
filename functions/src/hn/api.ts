@@ -8,6 +8,7 @@ const db = firebase.database().ref('/v0');
 const fetch = async (path): Promise<any> => {
   const ref = db.child(path);
   return new Promise((resolve, reject) => {
+    // tslint:disable-next-line
     ref.once('value', snapshot => resolve(snapshot.val()), reject);
   })
 }
@@ -44,6 +45,6 @@ export const getList = async (state) => {
   const ref = db.child(`${type}stories`);
   ref.on('value', async snapshot => {
     list.items = snapshot.val();
-    fetchListItems(list);
+    await fetchListItems(list);
   })
 };

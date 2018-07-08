@@ -27,6 +27,7 @@ const Comment = ({ comment }) => {
       <span>{timeAgo(comment.time)} ago</span>
     </div>
     <div className='text'>{`_html:${comment.text}`}</div>
+    {/* tslint:disable-next-line */}
     <Comments item={comment} />
   </li>
 }
@@ -93,14 +94,13 @@ const List = ({ list }) => {
 
 const view = state => {
   if (state instanceof Promise) return;
-  const style = (type) => ({ 'font-weight': type === state.type ? 'bold' : 'normal' });
   return state.type === 'item' ?
     <Item item={state[state.id]} /> :
     <List list={state[state.type]} />
 }
 
 const update = {
-  '#': (state, type, id) => {
+  '#': async (state, type, id) => {
     type = type || 'top';
     state.type = type;
     if (type === 'item') {
@@ -112,7 +112,7 @@ const update = {
         const max = parseInt(id) || 0;
         state[type].max = Math.min(max + page_size, state[type].items.length);
       }
-      getList(state);
+      await getList(state);
     }
   },
   'render': state => state,

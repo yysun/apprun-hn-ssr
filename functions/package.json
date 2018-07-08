@@ -11,7 +11,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "apprun": "^1.13.7",
+    "apprun": "^1.13.8",
     "compression": "^1.7.2",
     "express": "^4.16.3",
     "firebase": "^5.2.0",

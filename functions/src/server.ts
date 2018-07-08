@@ -1,9 +1,10 @@
 import apprun from 'apprun';
 import * as viewEngine from 'apprun/viewEngine';
-
+import * as compression from 'compression';
 import * as express from 'express';
 const app = express();
 
+app.use(compression());
 // app.use(express.static('public'));
 
 // set apprun as view engine
@@ -33,9 +34,11 @@ const route = async (req) => new Promise((resolve, reject) => {
 
 app.get(/^\/(top|new|best|show|ask|job|item)?\/?(\d+)?$/, async (req, res) => {
   try {
+    res.set('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=120');
     const vdom = await route(req);
     res.render('view', { layout, vdom });
   } catch (ex) {
+    res.set('Cache-Control', 'private');
     res.render('view', { layout, vdom: ex });
   }
 });

@@ -34,7 +34,7 @@ const route = async (req) => new Promise((resolve, reject) => {
 
 app.get(/^\/(top|new|best|show|ask|job|item)?\/?(\d+)?$/, async (req, res) => {
   try {
-    res.set('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=120');
+    if(global['ssr']) res.set('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=120');
     const vdom = await route(req);
     res.render('view', { layout, vdom });
   } catch (ex) {

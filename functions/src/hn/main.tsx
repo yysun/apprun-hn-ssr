@@ -37,7 +37,7 @@ const view = (children, path='') => {
         <div className='footer'>
           <div className='inner'>
             Powered by <a href='https://github.com/yysun/apprun'>AppRun</a>,
-            Source code: <a href='https://github.com/yysun/apprun-hn'>Github</a>
+            Source code: <a href='https://github.com/yysun/apprun-hn-ssr'>Github</a>
             &nbsp; {new Date().toLocaleTimeString()}
           </div>
         </div>

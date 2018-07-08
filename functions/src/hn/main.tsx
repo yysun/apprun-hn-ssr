@@ -42,7 +42,7 @@ const view = (children, path='') => {
           </div>
         </div>
       </div>
-      <script src="https://unpkg.com/apprun@latest/dist/apprun.js"></script>
+      <script src="apprun.js"></script>
       <script>{`
 const get = async (url) => {
   const response = await fetch(url,

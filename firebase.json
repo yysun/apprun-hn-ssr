@@ -17,6 +17,35 @@
         "source": "**",
         "function": "hn"
       }
+    ],
+    "headers": [
+      {
+        "source": "/*",
+        "headers": [
+          {
+            "key": "Link",
+            "value": "</apprun.js>;rel=preload;as=script"
+          }
+        ]
+      },
+      {
+        "source": "favicon.ico",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public,max-age=604800,s-maxage=604800"
+          }
+        ]
+      },
+      {
+        "source": "apprun.js",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public,max-age=604800,s-maxage=604800"
+          }
+        ]
+      }
     ]
   }
 }

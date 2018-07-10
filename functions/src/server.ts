@@ -15,21 +15,32 @@ import './hn/hacker-news';
 
 
 const route = async (req) => new Promise((resolve, reject) => {
+
+  const id = setTimeout(() => {
+    clear();
+    reject('Cannot route: ' + req.path);
+  }, 100000);
+
   const waitForVdom = p => {
     if (p.vdom && p.state.path === req.path) {
+      clear();
       resolve(p.vdom);
     }
   };
-  setTimeout(() => {
-    reject('Cannot route: ' + req.path);
+
+  const clear = () => {
+    clearTimeout(id);
     apprun.off('debug', waitForVdom);
-  }, 100000);
+  }
+
   apprun.on('debug', waitForVdom);
   try {
     apprun.run('route', '#' + req.path);
   } catch (ex) {
+    clear();
     reject(ex.toString());
   }
+
 });
 
 app.get(/^\/(top|new|best|show|ask|job|item)?\/?(\d+)?$/, async (req, res) => {

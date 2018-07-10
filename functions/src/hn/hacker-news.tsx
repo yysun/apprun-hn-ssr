@@ -87,7 +87,7 @@ const List = ({ list }) => {
     <div className='more'>
       <span>{list.min + 1} - {list.max} ({list.items.length}) &nbsp;</span>
       {list.items && list.max < list.items.length ?
-        <a className="menu" href={`/${list.type}/${list.max}`}> |&nbsp; More ...</a> : ''}
+        <a className="menu" href={`/${list.type}/${list.max + page_size}`}> |&nbsp; More ...</a> : ''}
     </div>
   </div>;
 }
@@ -101,6 +101,7 @@ const view = state => {
 
 const update = {
   '#': async (state, type, id) => {
+    state.path = '/' + (type || '') + (id ? '/' + id : '');
     type = type || 'top';
     state.type = type;
     if (type === 'item') {
@@ -109,8 +110,8 @@ const update = {
     } else {
       if (!state[type]) state[type] = { type, min: 0, max: page_size, items: [] };
       else {
-        const max = parseInt(id) || 0;
-        state[type].max = Math.min(max + page_size, state[type].items.length);
+        const max = parseInt(id) || page_size;
+        state[type].max = Math.min(max, state[type].items.length);
       }
       await getList(state);
     }

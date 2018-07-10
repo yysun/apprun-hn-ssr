@@ -5,44 +5,47 @@ import * as express from 'express';
 const app = express();
 
 app.use(compression());
-// app.use(express.static('public'));
 
 // set apprun as view engine
 app.engine('js', viewEngine());
 app.set('view engine', 'js');
-app.set('views', __dirname);
+app.set('views', __dirname + '/hn');
 
-// set global ssr flag
-app.use((req, res, next) => {
-  global['ssr'] = req.headers.accept.indexOf('application/json') < 0;
-  next();
-});
+import './hn/hacker-news';
 
-import layout from './hn/main';
 
 const route = async (req) => new Promise((resolve, reject) => {
-  apprun.on('debug', p => {
-    if (p.vdom) resolve(p.vdom);
-  });
-  setTimeout(() => { reject('Timeout') }, 10000);
+  const waitForVdom = p => {
+    if (p.vdom && p.state.path === req.path) {
+      resolve(p.vdom);
+    }
+  };
+  setTimeout(() => {
+    reject('Cannot route: ' + req.path);
+    apprun.off('debug', waitForVdom);
+  }, 100000);
+  apprun.on('debug', waitForVdom);
   try {
     apprun.run('route', '#' + req.path);
   } catch (ex) {
-    reject(ex.message);
+    reject(ex.toString());
   }
 });
 
 app.get(/^\/(top|new|best|show|ask|job|item)?\/?(\d+)?$/, async (req, res) => {
+  const ssr = req.headers.accept.indexOf('application/json') < 0;
   try {
-    if(global['ssr']) res.set('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=120');
+    if (global['ssr']) res.set('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=120');
     const vdom = await route(req);
-    res.render('view', { layout, vdom });
+    res.render('layout', { ssr, vdom, path: req.path });
   } catch (ex) {
     res.set('Cache-Control', 'private');
-    res.render('view', { layout, vdom: ex });
+    res.render('layout', { ssr, vdom: ex });
   }
 });
 
+// for testing
+// app.use(express.static('public'));
 // const listener = app.listen(process.env.PORT || 3000, function () {
 //   console.log('Your app is listening on port ' + listener.address().port);
 // });

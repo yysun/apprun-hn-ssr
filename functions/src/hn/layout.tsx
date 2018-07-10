@@ -1,8 +1,9 @@
 import app from 'apprun';
 
-const view = (children, path='') => {
-  const active = (href) => path === href ? ' active' : '';
-  return <html>
+export default ({ ssr, vdom, path }) => {
+  const active = (href) => path && path === href ? ' active' : '';
+  return !ssr ? vdom :
+  <html>
     <head>
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -31,7 +32,7 @@ const view = (children, path='') => {
         </div>
         <div className='main'>
           <div className='inner' id="my-app">
-            {children || ''}
+            {vdom}
           </div>
         </div>
         <div className='footer'>
@@ -46,19 +47,17 @@ const view = (children, path='') => {
       <script>{`
 const get = async (url) => {
   const response = await fetch(url,
-    { headers: { accept: 'application/json' } });
+    { headers: { Accept: 'application/json' } });
   if (!response.ok) {
     const data = await response.text();
     throw data;
   }
   return response.json();
 }
-
 window.addEventListener('popstate', (e) => {
   const path = document.location.pathname;
   app.run('/', path);
 });
-
 document.body.addEventListener('click', e => {
   const t = e.target;
   if (t.matches('.toggle')) {
@@ -73,22 +72,17 @@ document.body.addEventListener('click', e => {
     t.classList.add('active');
   }
 });
-
 const view = (state) => state;
-
 const update = {
   '/': async (_, path) => {
     const json = await get(path);
     return json;
   }
 };
-
 app.start('my-app', null, view, update);
       `}</script>
     </body>
   </html>
 }
 
-export default view;
 
-import './hacker-news';

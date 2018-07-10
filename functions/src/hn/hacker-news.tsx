@@ -100,7 +100,8 @@ const view = state => {
 }
 
 const update = {
-  '#': async (state, type, id) => {
+  '#': async (_, type, id) => {
+    const state:any = {};
     state.path = '/' + (type || '') + (id ? '/' + id : '');
     type = type || 'top';
     state.type = type;
@@ -108,18 +109,14 @@ const update = {
       state.id = id;
       getItem(state);
     } else {
-      if (!state[type]) state[type] = { type, min: 0, max: page_size, items: [] };
-      else {
-        const max = parseInt(id) || page_size;
-        state[type].max = Math.min(max, state[type].items.length);
-      }
+      state[type] = { type, min: 0, max: page_size, items: [] };
+      state[type].max = parseInt(id) || page_size;
       await getList(state);
     }
   },
-  'render': state => state,
+  'render': (_, state) => state,
 }
 
 app.start(null, {}, view, update);
-
 
 

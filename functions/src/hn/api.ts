@@ -21,10 +21,10 @@ const fetchItem = async ({ id }) => {
   return item;
 }
 
-export const getItem = (state) => {
+export const getItem = async (state) => {
   const id = state.id;
   const ref = db.child(`item/${id}`);
-  ref.on('value', async snapshot => {
+  await ref.once('value', async snapshot => {
     state[id] = await fetchItem(snapshot.val());
     app.run('render', state);
   })
@@ -45,7 +45,7 @@ export const getList = async (state) => {
     await fetchListItems(list);
   } else {
     const ref = db.child(`${type}stories`);
-    ref.on('value', async snapshot => {
+    await ref.once('value', async snapshot => {
       list.items = snapshot.val();
       await fetchListItems(list);
     })

@@ -93,21 +93,20 @@ const List = ({ list }) => {
 }
 
 const view = state => {
-  if (state instanceof Promise) return;
-  return state.type === 'item' ?
+  const vdom = state.type === 'item' ?
     <Item item={state[state.id]} /> :
     <List list={state[state.type]} />
+  return state.cb ? state.cb(vdom) : vdom;
 }
 
 const update = {
-  '#': async (_, type, id) => {
-    const state:any = {};
-    state.path = '/' + (type || '') + (id ? '/' + id : '');
+  '#': async (_, cb, type, id) => {
+    const state:any = { cb };
     type = type || 'top';
     state.type = type;
     if (type === 'item') {
       state.id = id;
-      getItem(state);
+      await getItem(state);
     } else {
       state[type] = { type, min: 0, max: page_size, items: [] };
       state[type].max = parseInt(id) || page_size;
@@ -117,6 +116,6 @@ const update = {
   'render': (_, state) => state,
 }
 
-app.start(null, {}, view, update);
+export default app.start(null, {}, view, update);
 
 
